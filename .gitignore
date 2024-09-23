@@ -1,0 +1,4 @@
+**.env
+**.sql
+__pycache__
+**.venv
