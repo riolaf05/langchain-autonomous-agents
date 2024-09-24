@@ -2,6 +2,7 @@ import base64
 from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
+from langchain_groq import ChatGroq
 from langchain_core.output_parsers import JsonOutputParser
 from langchain.chains import TransformChain
 from langchain_core.runnables import chain
@@ -30,7 +31,7 @@ prompt = f"""
    Vedrai la foto dello stato del magazino con 9 scaffali divisi in 
     3 righe e 3 colonne .
     Dovrai indicarmi se su uno scaffale è presente un oggetto e se si di che colore è . 
-     
+
 """
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -54,7 +55,8 @@ def load_image(inputs: dict) -> dict:
 @chain
 def image_model(inputs: dict) -> str:
  """Invoke model with image and prompt."""
- model = ChatOpenAI(temperature=0.1, model="gpt-4o", max_tokens=1024)
+#  model = ChatOpenAI(temperature=0, model="gpt-4o", max_tokens=1024)
+ model = ChatGroq(temperature=0, model_name="Llama3-8b-8192")
  msg = model.invoke(
              [HumanMessage(
                 content=[
