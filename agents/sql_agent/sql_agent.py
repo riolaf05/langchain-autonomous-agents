@@ -42,9 +42,28 @@ rabbit_client=RabbitMQClient(
 )
 rabbit_client.declare_queue(QUEUE_NAME)
 
+def create_tables():
+    sql_statements = [ 
+        """CREATE TABLE IF NOT EXISTS example_table (
+                id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                title text NOT NULL, 
+                description TEXT
+        );"""
+    ]
+    try:
+        with sqlite3.connect('example.db') as conn:
+            cursor = conn.cursor()
+            for statement in sql_statements:
+                cursor.execute(statement)
+            
+            conn.commit()
+    except sqlite3.Error as e:
+        print(e)
+
 def callback(body):
         print(f" [x] Received {body}")
         try:
+            create_tables() #FIXME
             data = chain.invoke({"query": body['description']})
             conn.execute("INSERT INTO example_table (title, description) VALUES (?, ?)", 
                 (data["title"], data["description"]))
