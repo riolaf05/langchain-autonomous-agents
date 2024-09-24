@@ -2,3 +2,4 @@ pika
 langchain
 langchain-openai
 flask
+python-dotenv
