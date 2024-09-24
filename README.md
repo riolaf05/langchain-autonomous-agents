@@ -34,7 +34,8 @@ The system uses an event-driven architecture, meaning that agents do not work in
 To set up the system using Docker and Docker Compose, follow the steps below:
 
 1. Clone the repository
-2. Setup with Docker compose
+2. update the `.env` file
+3. Setup with Docker compose
 ```console
 sudo docker-compose up -d
 ```
