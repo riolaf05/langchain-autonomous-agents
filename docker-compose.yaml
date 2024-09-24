@@ -21,8 +21,9 @@ services:
       - RABBITMQ_URL=${RABBITMQ_URL}
       - RABBITMQ_QUEUE_NAME=${RABBITMQ_QUEUE_NAME}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
-    # ports:
-    #   - "3000:3000" 
+      - GROQ_API_KEY=${GROQ_API_KEY}
+    ports:
+      - "5000:5000" 
     networks:
       - agent_network
 
