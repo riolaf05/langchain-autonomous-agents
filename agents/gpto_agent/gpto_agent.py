@@ -11,6 +11,7 @@ from werkzeug.utils import secure_filename
 import logging
 from dotenv import load_dotenv
 load_dotenv(override=True)
+import sys
 import os
 
 QUEUE_NAME=os.getenv('RABBITMQ_QUEUE_NAME')
@@ -28,6 +29,7 @@ prompt = f"""
 """
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.secret_key = "super secret key"
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -45,7 +47,7 @@ def load_image(inputs: dict) -> dict:
 
 
 @chain
-def image_model(inputs: dict) -> str | list[str] | dict:
+def image_model(inputs: dict) -> str:
  """Invoke model with image and prompt."""
  model = ChatOpenAI(temperature=0.1, model="gpt-4o", max_tokens=1024)
  msg = model.invoke(
@@ -68,31 +70,32 @@ def get_image_informations(vision_prompt, image_path: str) -> dict:
    return vision_chain.invoke({'image_path': f'{image_path}', 
                                'prompt': vision_prompt})
 
-@app.route('/upload', methods=['POST'])
-def upload_file():
-    if request.method == 'POST':
+@app.route("/upload",methods=["POST","GET"])
+def main():
+    try:
+        if request.method=='POST':
+            # print("request",request.form)
+            image=request.files['image']
+            image_name=image.filename
+            if allowed_file(image_name):
+            
+                file_path=os.path.join(app.config['UPLOAD_FOLDER'], image_name)
+                image.save(file_path)
+                print("file_path", file_path, file=sys.stderr)
+                print(os.listdir(app.config['UPLOAD_FOLDER']), file=sys.stderr)
+                flash('File successfully uploaded')
+                result = get_image_informations(prompt, file_path)
+                print(result, file=sys.stderr)
+                rabbit_client.send_message('', QUEUE_NAME, {'description': result})
+                os.remove(file_path)
 
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-
-        file = request.files['file']
-
-        if file.filename == '':
-            flash('No file selected for uploading')
-            return redirect(request.url)
-
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file_path=os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.savefile_path
-            flash('File successfully uploaded')
-            result = get_image_informations(prompt, file_path)
-            flash(result)
-            rabbit_client.send_message('', QUEUE_NAME, {'story': result})
-        else:
-            flash('Allowed file types are txt, pdf, png, jpg, jpeg, gif')
-            return redirect(request.url)
+                return {"response":"file loaded"}
+            
+            else:
+                return {"error":"select you image file"}
+            
+    except Exception as e:
+        return {"error":str(e)}
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0',port=5000)
+    app.run(host='0.0.0.0',port=5000,debug=True)

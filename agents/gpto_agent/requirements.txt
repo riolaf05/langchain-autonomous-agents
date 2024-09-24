@@ -1,3 +1,4 @@
 pika
 langchain
 langchain-openai
+flask

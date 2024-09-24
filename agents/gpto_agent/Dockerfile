@@ -17,9 +17,9 @@ RUN pip3 install -r requirements.txt
 HEALTHCHECK CMD curl --fail http://localhost:8080 || exit 1
 
 RUN mkdir /tmp/upload
-COPY ../tools/ ../tools/
+COPY tools/ tools/
 # COPY prompts/ prompts/
-COPY ../utils/ ../utils/
+COPY utils/ utils/
 COPY gpto_agent.py gpto_agent.py 
 
 #for normal deploy
