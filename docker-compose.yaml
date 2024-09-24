@@ -1,21 +1,24 @@
 version: '3.8'
 
 services:
-  # sql_agent:
-  #   image: agents/sql_agent:latest
-  #   container_name: sql_agent
-  #   environment:
-  #     - DATABASE_HOST=your_database_host
-  #     - DATABASE_PORT=your_database_port
-  #     - DATABASE_USER=your_database_user
-  #     - DATABASE_PASSWORD=your_database_password
-  #   ports:
-  #     - "8080:8080" # Adjust this port if your SQL agent runs on a different one
-  #   networks:
-  #     - agent_network
+
+  sql_agent:
+    build: 
+      context: agents/sql_agent
+      dockerfile: Dockerfile
+    container_name: sql_agent
+    environment:
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - RABBITMQ_QUEUE_NAME=${RABBITMQ_QUEUE_NAME}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GROQ_API_KEY=${GROQ_API_KEY}
+    networks:
+      - agent_network
 
   gpto_agent:
-    image: agents/gpto_agent:latest
+    build: 
+      context: agents/gpto_agent
+      dockerfile: Dockerfile
     container_name: gpto_agent
     environment:
       - RABBITMQ_URL=${RABBITMQ_URL}

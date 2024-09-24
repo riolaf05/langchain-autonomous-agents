@@ -16,11 +16,11 @@ RUN pip3 install -r requirements.txt
 
 HEALTHCHECK CMD curl --fail http://localhost:8080 || exit 1
 
-COPY ../tools/ ../tools/
+COPY tools/ tools/
 # COPY prompts/ prompts/
-COPY ../utils/ ../utils/
+COPY utils/ utils/
 COPY sql_agent.py sql_agent.py 
 
 #for normal deploy
-ENTRYPOINT ["sql_agent", "sql_agent.py"]
+ENTRYPOINT ["python", "sql_agent.py"]
 
