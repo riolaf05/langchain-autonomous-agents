@@ -72,30 +72,30 @@ def get_image_informations(vision_prompt, image_path: str) -> dict:
 
 @app.route("/upload",methods=["POST","GET"])
 def main():
-    # try:
-    if request.method=='POST':
-        # print("request",request.form)
-        image=request.files['image']
-        image_name=image.filename
-        if allowed_file(image_name):
-        
-            file_path=os.path.join(app.config['UPLOAD_FOLDER'], image_name)
-            image.save(file_path)
-            print("file_path", file_path, file=sys.stderr)
-            print(os.listdir(app.config['UPLOAD_FOLDER']), file=sys.stderr)
-            flash('File successfully uploaded')
-            result = get_image_informations(prompt, file_path)
-            print(result, file=sys.stderr)
-            rabbit_client.send_message('', QUEUE_NAME, {'description': result})
-            os.remove(file_path)
-
-            return {"response":"file loaded"}
-        
-        else:
-            return {"error":"select you image file"}
+    try:
+        if request.method=='POST':
+            # print("request",request.form)
+            image=request.files['image']
+            image_name=image.filename
+            if allowed_file(image_name):
             
-    # except Exception as e:
-    #     return {"error":str(e)}
+                file_path=os.path.join(app.config['UPLOAD_FOLDER'], image_name)
+                image.save(file_path)
+                print("file_path", file_path, file=sys.stderr)
+                print(os.listdir(app.config['UPLOAD_FOLDER']), file=sys.stderr)
+                flash('File successfully uploaded')
+                result = get_image_informations(prompt, file_path)
+                print(result, file=sys.stderr)
+                rabbit_client.send_message('', QUEUE_NAME, {'description': result})
+                os.remove(file_path)
+
+                return {"response": result}
+            
+            else:
+                return {"error":"select you image file"}
+            
+    except Exception as e:
+        return {"error":str(e)}
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0',port=5000,debug=True)
