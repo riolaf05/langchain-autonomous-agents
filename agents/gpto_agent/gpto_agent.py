@@ -25,7 +25,12 @@ rabbit_client=RabbitMQClient(
 )
 rabbit_client.declare_queue(QUEUE_NAME)
 prompt = f"""
-   Data l'immagine ricevuta, descrivila nei dettagli . 
+   Sei un agente deputato al riconoscimento dello stato di un magazino  .
+
+   Vedrai la foto dello stato del magazino con 9 scaffali divisi in 
+    3 righe e 3 colonne .
+    Dovrai indicarmi se su uno scaffale è presente un oggetto e se si di che colore è . 
+     
 """
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
