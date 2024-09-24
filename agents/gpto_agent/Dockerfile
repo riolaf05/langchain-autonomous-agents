@@ -16,6 +16,7 @@ RUN pip3 install -r requirements.txt
 
 HEALTHCHECK CMD curl --fail http://localhost:8080 || exit 1
 
+RUN mkdir /tmp/upload
 COPY test/TRUPPE-CAMMELLATE.jpg /tmp/TRUPPE-CAMMELLATE.jpg
 COPY ../tools/ ../tools/
 # COPY prompts/ prompts/
