@@ -56,7 +56,7 @@ def load_image(inputs: dict) -> dict:
 def image_model(inputs: dict) -> str:
  """Invoke model with image and prompt."""
 #  model = ChatOpenAI(temperature=0, model="gpt-4o", max_tokens=1024)
- model = ChatGroq(temperature=0, model_name="Llama3-8b-8192")
+ model = ChatGroq(temperature=0, model_name="llava-v1.5-7b-4096-preview")
  msg = model.invoke(
              [HumanMessage(
                 content=[
